@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  wis2downloader:
+    build: .
+    volumes:
+      - ./downloads:/downloads
+      - ./certs:/certs
+    environment:
+      - MQTT_SERVER=ssl://globalbroker.meteo.fr:8883
+      - MQTT_TOPIC=origin/a/wis2/+/data/core/weather/surface-based-observations/synop
+      - MQTT_USERNAME=everyone
+      - MQTT_PASSWORD=everyone
+    command: 
+      - "-server"
+      - "${MQTT_SERVER}"
+      - "-topic"
+      - "${MQTT_TOPIC}"
+      - "-username"
+      - "${MQTT_USERNAME}"
+      - "-password"
+      - "${MQTT_PASSWORD}"
+      - "-download"
+      - "/downloads"
+      - "-cafile"
+      - "/certs/ca.crt"
+      - "-cert"
+      - "/certs/client.crt"
+      - "-key"
+      - "/certs/client.key"
+    restart: unless-stopped
