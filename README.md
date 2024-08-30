@@ -3,6 +3,7 @@
 Use this container to connect to WIS 2.0 message broker and download bufr files from WIS 2.0 global cache.
 
 Dockerhub image fmidev/wis2downloader updates automatically.
+https://hub.docker.com/r/fmidev/wis2downloader
 
 Example command line (see docker-compose)
 ```
