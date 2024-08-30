@@ -1,6 +1,6 @@
 services:
   wis2downloader:
-    image: wis2downloader
+    image: fmidev/wis2downloader
     container_name: wis2downloader
     volumes:
       - /smartmet/data/incoming/wis2/synop:/downloads
