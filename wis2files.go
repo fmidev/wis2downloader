@@ -13,6 +13,7 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"strings"
 	"sync"
 	"time"
 
@@ -23,6 +24,7 @@ type NotificationMessage struct {
 	Links []struct {
 		Href string `json:"href"`
 		Type string `json:"type"`
+		Rel  string `json:"rel"` // Added rel field
 	} `json:"links"`
 }
 
@@ -131,13 +133,15 @@ func createMessageHandler(downloadDir string) mqtt.MessageHandler {
 		}
 
 		for _, link := range notification.Links {
-			wg.Add(1)
-			go func(url string) {
-				defer wg.Done()
-				if err := downloadFile(url, downloadDir); err != nil {
-					log.Printf("Error downloading file from %s: %v", url, err)
-				}
-			}(link.Href)
+			if strings.EqualFold(link.Rel, "canonical") { // Check if rel is "canonical"
+				wg.Add(1)
+				go func(url string) {
+					defer wg.Done()
+					if err := downloadFile(url, downloadDir); err != nil {
+						log.Printf("Error downloading file from %s: %v", url, err)
+					}
+				}(link.Href)
+			}
 		}
 
 		wg.Wait()
