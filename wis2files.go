@@ -13,7 +13,6 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
-	"strings"
 	"sync"
 	"time"
 
@@ -132,15 +131,13 @@ func createMessageHandler(downloadDir string) mqtt.MessageHandler {
 		}
 
 		for _, link := range notification.Links {
-			if strings.Contains(strings.ToLower(link.Type), "bufr") {
-				wg.Add(1)
-				go func(url string) {
-					defer wg.Done()
-					if err := downloadFile(url, downloadDir); err != nil {
-						log.Printf("Error downloading file from %s: %v", url, err)
-					}
-				}(link.Href)
-			}
+			wg.Add(1)
+			go func(url string) {
+				defer wg.Done()
+				if err := downloadFile(url, downloadDir); err != nil {
+					log.Printf("Error downloading file from %s: %v", url, err)
+				}
+			}(link.Href)
 		}
 
 		wg.Wait()
