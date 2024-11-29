@@ -45,6 +45,7 @@ func main() {
 	clientCert := flag.String("cert", "", "Path to client certificate file")
 	clientKey := flag.String("key", "", "Path to client key file")
 	downloadDir = flag.String("download", "downloads", "Directory to save downloaded files")
+	clientID := flag.String("clientid", "wis2-mqtt-subscriber", "MQTT client ID") // New flag
 	flag.Parse()
 
 	if *server == "" || *topic == "" {
@@ -54,12 +55,12 @@ func main() {
 	opts := mqtt.NewClientOptions().AddBroker(*server)
 	opts.SetUsername(*username)
 	opts.SetPassword(*password)
-	opts.SetClientID("wis2-mqtt-subscriber")
+	opts.SetClientID(*clientID) // Use the client ID from the flag
 	opts.SetAutoReconnect(true)
 	opts.SetConnectRetry(true)
 	opts.SetConnectRetryInterval(2 * time.Second)
 	opts.SetMaxReconnectInterval(1 * time.Minute)
-	opts.SetKeepAlive(30 * time.Second)
+	opts.SetKeepAlive(60 * time.Second)
 	opts.SetPingTimeout(30 * time.Second)
 	opts.SetOnConnectHandler(onConnect)
 	opts.SetConnectionLostHandler(connectLostHandler)
